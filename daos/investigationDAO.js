@@ -26,7 +26,7 @@ exports.getInvestigationTimeline = async (investigation_id) => {
         FROM incident
         WHERE investigation_id = '${investigation_id}'
         UNION ALL
-        SELECT 'investigation_activity'  as event_Type,
+        SELECT 'investigation_activity'  as event_type,
                investigation_activity_id as event_id,
                activity_date             as event_date,
                name,
