@@ -17,11 +17,11 @@ exports.getInvestigationTimeline = async (req, res) => {
     try {
         let timeline = await investigationService.getAllInvestigationTimeline(investigation_id);
 
-        // Loop through each result
+        // Loop through each event
         timeline = timeline.map(result => {
-            // Loop through each property in the result
+            // Loop through each property in the event
             for (const property in result) {
-                // If the property's value is null, delete the property
+                // If the property's value is null, delete the property  or key-value pair
                 if (result[property] === null) {
                     delete result[property];
                 }
