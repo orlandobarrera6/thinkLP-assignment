@@ -11,8 +11,9 @@ exports.getAllInvestigations = async () => {
 exports.getInvestigationTimeline = async (investigation_id) => {
     // Perform database query to retrieve timeline by investigation_id
     const query = unionQuery(investigation_id);
-    const {rows} = await db.query(query);
+    // const query = investigationEventViewQuery(investigation_id);
 
+    const {rows} = await db.query(query);
     return rows;
 };
 
@@ -52,4 +53,11 @@ function unionQuery(investigation_id) {
         ORDER BY event_date DESC;`
 }
 
-
+function investigationEventViewQuery(investigation_id) {
+    return `
+        SELECT *
+        FROM investigation_event
+        WHERE investigation_event.investigation_id = '${investigation_id}'
+        ORDER BY event_date DESC;
+    `
+}
