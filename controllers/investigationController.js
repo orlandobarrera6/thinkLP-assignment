@@ -1,5 +1,5 @@
 const investigationService = require('../services/investigationService');
-
+const {objectInfos} = require('../objectInfos.json');
 
 exports.getAllInvestigations = async (req, res) => {
     try {
@@ -17,19 +17,7 @@ exports.getInvestigationTimeline = async (req, res) => {
     try {
         let timeline = await investigationService.getAllInvestigationTimeline(investigation_id);
 
-        // Loop through each event
-        timeline = timeline.map(result => {
-            // Loop through each property in the event
-            for (const property in result) {
-                // If the property's value is null, delete the property  or key-value pair
-                if (result[property] === null) {
-                    delete result[property];
-                }
-            }
-            return result;
-        });
-
-        // Bonus
+        timeline = processTimeline(timeline);
 
         res.json(timeline);
     } catch (err) {
@@ -38,8 +26,51 @@ exports.getInvestigationTimeline = async (req, res) => {
     }
 };
 
+function processTimeline(timeline) {
+    const safeFields = ['event_type', 'event_date', 'record_type'];
 
-// TODO: look into joins
-// TODO: look into coalesce
-// TODO: ORDER BY COALESCE (Incident_Date, Activity_Date, Investigation_Date) DESC; --> for join
-// TODO: switch is better here with accesible interfaces for each record type  for bonus
+    // Remove key-value pairs with null values
+    // Loop through each event
+    timeline.forEach(event => {
+        // Loop through each property in the event
+        for (const property in event) {
+            // If the property's value is null, delete the property  or key-value pair
+            if (event[property] === null) {
+                delete event[property];
+            }
+        }
+    });
+
+    // Bonus
+    // Loop through each event
+    timeline.forEach(event => {
+        const recordType = event.record_type;
+        if (event.event_type === 'investigation_activity') {
+            const fields = objectInfos.Investigation_Activity.recordTypeToFields[recordType];
+
+            if (!fields) {
+                return;
+            }
+
+            // Loop through the keys of the event
+            Object.keys(event).forEach(key => {
+                // If the key is not in the list of fields for the record type, delete the key-value pair
+                if (!fields.includes(key) && !safeFields.includes(key)) {
+                    delete event[key];
+                }
+            });
+        } else {
+            const fields = objectInfos.Incident.recordTypeToFields["__Default__"];
+
+            // Loop through the keys of the event
+            Object.keys(event).forEach(key => {
+                // If the key is not in the list of fields for the record type, delete the key-value pair
+                if (!fields.includes(key) && !safeFields.includes(key)) {
+                    delete event[key];
+                }
+            });
+        }
+    });
+
+    return timeline;
+}

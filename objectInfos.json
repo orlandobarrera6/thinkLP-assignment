@@ -1,0 +1,38 @@
+{
+  "objectInfos": {
+    "Investigation_Activity": {
+      "recordTypeToFields": {
+        "Warrant_Served": [
+          "event_date",
+          "investigation_activity_location",
+          "status"
+        ],
+        "Trespass_Issued": [
+          "date_issued",
+          "issued_by",
+          "status"
+        ],
+        "Trash_Pull": [
+          "start_date",
+          "status"
+        ],
+        "Summons": [
+          "date_issued",
+          "date_of_appearance",
+          "summons",
+          "status"
+        ]
+      }
+    },
+    "Incident": {
+      "recordTypeToFields": {
+        "__Default__": [
+          "event_date",
+          "incident_type",
+          "status",
+          "case_value"
+        ]
+      }
+    }
+  }
+}
